@@ -1,5 +1,6 @@
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,12 +14,18 @@ namespace AoDiscordBot.Services
         private readonly ILogger<DiscordBotBackgroundService> _logger;
         private readonly DiscordSocketClient discordSocketClient;
         private readonly CommandHandlingService commandHandlingService;
+        private readonly IConfiguration _configuration;
 
-        public DiscordBotBackgroundService(ILogger<DiscordBotBackgroundService> logger, DiscordSocketClient discordSocketClient, CommandHandlingService commandHandlingService)
+        public DiscordBotBackgroundService(
+            ILogger<DiscordBotBackgroundService> logger,
+            DiscordSocketClient discordSocketClient,
+            CommandHandlingService commandHandlingService,
+            IConfiguration configuration)
         {
             _logger = logger;
             this.discordSocketClient = discordSocketClient;
             this.commandHandlingService = commandHandlingService;
+            _configuration = configuration;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,18 +44,17 @@ namespace AoDiscordBot.Services
 
         private async Task YourAsyncTask()
         {
-
             //_client.Log += Log;
 
             //  You can assign your bot token to a string, and pass that in to connect.
             //  This is, however, insecure, particularly if you plan to have your code hosted in a public repository.
-            var token = "";
+            var token = _configuration["DiscordBot:Token"];
 
-            // Some alternative options would be to keep your token in an Environment Variable or a standalone file.
-            // var token = Environment.GetEnvironmentVariable("NameOfYourEnvironmentVariable");
-            // var token = File.ReadAllText("token.txt");
-            // var token = JsonConvert.DeserializeObject<AConfigurationClass>(File.ReadAllText("config.json")).Token;
-
+            if (string.IsNullOrEmpty(token))
+            {
+                _logger.LogError("Discord bot token is missing in the configuration.");
+                return;
+            }
 
             //_client.MessageReceived += MessageReceivedAsync;
             //_client.InteractionCreated += InteractionCreatedAsync;

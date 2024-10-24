@@ -197,6 +197,49 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
         return true;
     }
 
+    [Command("help")]
+    public async Task Help()
+    {
+        var reply = new StringBuilder();
+        reply.AppendLine("**Available Commands:**");
+        reply.AppendLine();
 
+        reply.AppendLine("1. **!balance [address] [token_id]**");
+        reply.AppendLine("   - Get the balance of an address for a specific token.");
+        reply.AppendLine("   - Input: Address (required), Token ID (optional, defaults to AOPROXY)");
+        reply.AppendLine("   - Output: Address and balance information");
+        reply.AppendLine();
+
+        reply.AppendLine("2. **!transactions [address]**");
+        reply.AppendLine("   - List recent transactions for an address.");
+        reply.AppendLine("   - Input: Address (required)");
+        reply.AppendLine("   - Output: List of recent transactions");
+        reply.AppendLine();
+
+        reply.AppendLine("3. **!transaction [tx_id]**");
+        reply.AppendLine("   - Get detailed information about a specific transaction.");
+        reply.AppendLine("   - Input: Transaction ID (required)");
+        reply.AppendLine("   - Output: Detailed transaction information");
+        reply.AppendLine();
+
+        reply.AppendLine("4. **!token [token_id]**");
+        reply.AppendLine("   - Get information about a specific token.");
+        reply.AppendLine("   - Input: Token ID (required)");
+        reply.AppendLine("   - Output: Token information (name, ticker, denomination, logo)");
+        reply.AppendLine();
+
+        reply.AppendLine("5. **!actions [address]**");
+        reply.AppendLine("   - List possible actions for a given process address.");
+        reply.AppendLine("   - Input: Process Address (required)");
+        reply.AppendLine("   - Output: List of possible actions with clickable links");
+        reply.AppendLine();
+
+        reply.AppendLine("6. **!help**");
+        reply.AppendLine("   - Display this help message with all available commands.");
+        reply.AppendLine("   - Input: None");
+        reply.AppendLine("   - Output: List of all commands and their usage");
+
+        await ReplyAsync(reply.ToString());
+    }
 
 }
