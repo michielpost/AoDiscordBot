@@ -95,14 +95,17 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
 
         reply.AppendLine("Reply with 'transaction {txId}' to receive more information about a transaction.");
 
+        var builder = new ComponentBuilder();
+        builder = builder.WithButton("View on ao.link", style: ButtonStyle.Link, url: $"https://www.ao.link/#/entity/{address}");
 
-        await ReplyAsync(reply.ToString());
+
+        await ReplyAsync(reply.ToString(), components: builder.Build());
     }
 
     private async Task<string?> GetTokenTicker(string? tokenId)
     {
         if (string.IsNullOrWhiteSpace(tokenId))
-            return "Unkwon token";
+            return "Unknown token";
 
         var tokenMeta = await tokenDataService.GetTokenInfo(tokenId);
         return tokenMeta?.Ticker;
