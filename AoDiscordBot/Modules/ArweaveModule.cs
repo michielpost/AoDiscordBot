@@ -83,11 +83,14 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
             return;
         }
 
+        var showTrans = allNew.Take(5).ToList();
+
         var reply = new StringBuilder();
-        reply.AppendLine($"Last {allNew.Count} transactions for {address}");
-        foreach (var transaction in allNew)
+        reply.AppendLine($"Last {showTrans.Count} transactions for {address}");
+        foreach (var transaction in showTrans)
         {
-            reply.AppendLine($"{transaction.Quantity} {GetTokenTicker(transaction.TokenId)} | {transaction.From} > {transaction.To} | {transaction.Id}");
+            var ticker = await GetTokenTicker(transaction.TokenId);
+            reply.AppendLine($"{transaction.Quantity} {ticker} | {transaction.From} > {transaction.To} | {transaction.Id}");
         }
 
         reply.AppendLine("Reply with 'transaction {txId}' to receive more information about a transaction.");
@@ -119,13 +122,16 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
             return;
         }
 
+        var builder = new ComponentBuilder();
+        builder = builder.WithButton("View on ao.link", style: ButtonStyle.Link, url: $"https://www.ao.link/#/message/{txId}");
+
         var reply = new StringBuilder();
         reply.AppendLine($"Transaction info: {txId}");
         reply.AppendLine($"{result.Timestamp}");
         reply.AppendLine($"From: {result.From} | To: {result.To}");
-        reply.AppendLine($"{result.TokenTransferType} Amount: {result.Quantity} | Token: {GetTokenTicker(result.TokenId)}");
+        reply.AppendLine($"{result.TokenTransferType} Amount: {result.Quantity} | Token: {await GetTokenTicker(result.TokenId)}");
 
-        await ReplyAsync(reply.ToString());
+        await ReplyAsync(reply.ToString(), components: builder.Build() );
     }
 
     [Command("token")]
@@ -152,7 +158,7 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
         reply.AppendLine($"Name: {tokenInfo.Name}");
         reply.AppendLine($"Ticker: {tokenInfo.Ticker}");
         reply.AppendLine($"Denomination: {tokenInfo.Denomination}");
-        reply.AppendLine($"Logo: {tokenInfo.Logo}");
+        //reply.AppendLine($"Logo: {tokenInfo.Logo}");
 
         await ReplyAsync(reply.ToString());
 
@@ -204,37 +210,37 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
         reply.AppendLine("**Available Commands:**");
         reply.AppendLine();
 
-        reply.AppendLine("1. **!balance [address] [token_id]**");
+        reply.AppendLine("1. **balance [address] [token_id]**");
         reply.AppendLine("   - Get the balance of an address for a specific token.");
-        reply.AppendLine("   - Input: Address (required), Token ID (optional, defaults to AOPROXY)");
+        reply.AppendLine("   - Input: Address (required), Token ID (optional, defaults to AO Token)");
         reply.AppendLine("   - Output: Address and balance information");
         reply.AppendLine();
 
-        reply.AppendLine("2. **!transactions [address]**");
+        reply.AppendLine("2. **transactions [address]**");
         reply.AppendLine("   - List recent transactions for an address.");
         reply.AppendLine("   - Input: Address (required)");
         reply.AppendLine("   - Output: List of recent transactions");
         reply.AppendLine();
 
-        reply.AppendLine("3. **!transaction [tx_id]**");
+        reply.AppendLine("3. **transaction [tx_id]**");
         reply.AppendLine("   - Get detailed information about a specific transaction.");
         reply.AppendLine("   - Input: Transaction ID (required)");
         reply.AppendLine("   - Output: Detailed transaction information");
         reply.AppendLine();
 
-        reply.AppendLine("4. **!token [token_id]**");
+        reply.AppendLine("4. **token [token_id]**");
         reply.AppendLine("   - Get information about a specific token.");
         reply.AppendLine("   - Input: Token ID (required)");
-        reply.AppendLine("   - Output: Token information (name, ticker, denomination, logo)");
+        reply.AppendLine("   - Output: Token information (name, ticker, denomination)");
         reply.AppendLine();
 
-        reply.AppendLine("5. **!actions [address]**");
+        reply.AppendLine("5. **actions [address]**");
         reply.AppendLine("   - List possible actions for a given process address.");
         reply.AppendLine("   - Input: Process Address (required)");
         reply.AppendLine("   - Output: List of possible actions with clickable links");
         reply.AppendLine();
 
-        reply.AppendLine("6. **!help**");
+        reply.AppendLine("6. **help**");
         reply.AppendLine("   - Display this help message with all available commands.");
         reply.AppendLine("   - Input: None");
         reply.AppendLine("   - Output: List of all commands and their usage");

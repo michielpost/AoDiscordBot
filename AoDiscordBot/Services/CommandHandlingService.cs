@@ -44,7 +44,9 @@ public class CommandHandlingService
         // Perform prefix check. You may want to replace this with
         // (!message.HasCharPrefix('!', ref argPos))
         // for a more traditional command format like !help.
-        if (!message.HasMentionPrefix(_discord.CurrentUser, ref argPos))
+
+        bool isDM = rawMessage.Channel is IDMChannel;
+        if (!isDM && !message.HasMentionPrefix(_discord.CurrentUser, ref argPos))
             return;
 
         var context = new SocketCommandContext(_discord, message);

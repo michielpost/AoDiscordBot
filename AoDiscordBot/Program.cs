@@ -18,7 +18,7 @@ namespace AoDiscordBot
 
             builder.Services.AddSingleton(new DiscordSocketConfig
             {
-                GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+                GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.DirectMessages
             })
            .AddSingleton<DiscordSocketClient>()
            .AddSingleton<CommandService>()
