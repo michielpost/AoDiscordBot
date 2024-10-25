@@ -5,7 +5,14 @@ Discord Bot for Arweave AO
 Add the bot to your server:  
 https://discord.com/oauth2/authorize?client_id=1299023316157337712&permissions=0&integration_type=0&scope=bot
 
-## Commands
+## Example Commands
+- `balance aGeRSnWykicBEGESPbTXPQ0_q2IiMLBBMyemu2pBYoA KmGmJieqSRJpbW6JJUFQrH3sQPEG9F6DQETlXNt4GpM`
+- `token KmGmJieqSRJpbW6JJUFQrH3sQPEG9F6DQETlXNt4GpM`
+- `transactions aGeRSnWykicBEGESPbTXPQ0_q2IiMLBBMyemu2pBYoA`
+- `transaction 2sZkXP3mZyl6ZvILZwZ_xHiBwuwlCowlN4gkqkGcMVA`
+- `actions KmGmJieqSRJpbW6JJUFQrH3sQPEG9F6DQETlXNt4GpM`
+
+## Commands Documentation
 ```
 balance [address] [token_id]
 Get the balance of an address for a specific token.
