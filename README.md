@@ -21,6 +21,8 @@ Add the bot to your own server, or join this test server to talk to the bot!
 - Join the AO Bot Test Server: https://discord.gg/3X5Eaf3dc7
 - Start a conversation with AO Bot in a DM or in the main channel using `@AO Bot help`
 
+Demo video: https://vimeo.com/1025886828
+
 
 ## Example Commands
 - `help`
