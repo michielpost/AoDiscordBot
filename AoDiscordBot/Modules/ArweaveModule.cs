@@ -42,17 +42,21 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
         if (string.IsNullOrWhiteSpace(tokenId))
             tokenId = AOPROXY;
 
-        bool isValidTokenId = await ValidateAddress(tokenId);
-        if (!isValidTokenId) return;
+        TokenData? tokenByName = await tokenDataService.GetTokenInfoByName(tokenId);
+        if (tokenByName == null)
+        {
+            bool isValidTokenId = await ValidateAddress(tokenId);
+            if (!isValidTokenId) return;
+        }
 
-        TokenData? tokenInfo = await tokenDataService.GetTokenInfo(tokenId);
+        TokenData? tokenInfo = await tokenDataService.GetTokenInfo(tokenId) ?? tokenByName;
         if (tokenInfo == null)
         {
             await ReplyAsync("Unable to get token info for this token.");
             return;
         }
 
-        var result = await tokenClient.GetBalance(tokenId, address);
+        var result = await tokenClient.GetBalance(tokenInfo.TokenId, address);
 
         var formattedBalance = BalanceHelper.FormatBalance(result?.Balance, tokenInfo?.Denomination ?? 0);
 
@@ -140,13 +144,18 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
     [Command("token")]
     public async Task Token([Remainder] string? tokenId = null)
     {
-        bool isValid = await ValidateAddress(tokenId);
-        if (!isValid) return;
-
+        
         if (string.IsNullOrEmpty(tokenId))
         {
             await ReplyAsync($"Please provide a token id.");
             return;
+        }
+
+        TokenData? tokenByName = await tokenDataService.GetTokenInfoByName(tokenId);
+        if (tokenByName == null)
+        {
+            bool isValidTokenId = await ValidateAddress(tokenId);
+            if (!isValidTokenId) return;
         }
 
         TokenData? tokenInfo = await tokenDataService.GetTokenInfo(tokenId);
@@ -157,7 +166,7 @@ public class ArweaveModule : ModuleBase<SocketCommandContext>
         }
 
         var reply = new StringBuilder();
-        reply.AppendLine($"Token info: {tokenId}");
+        reply.AppendLine($"Token info: {tokenInfo.TokenId}");
         reply.AppendLine($"Name: {tokenInfo.Name}");
         reply.AppendLine($"Ticker: {tokenInfo.Ticker}");
         reply.AppendLine($"Denomination: {tokenInfo.Denomination}");

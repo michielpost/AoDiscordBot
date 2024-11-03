@@ -19,10 +19,27 @@ namespace AoDiscordBot.Services
             tokenCache = LoadCache();
         }
 
+        public async Task<TokenData?> GetTokenInfoByName(string tokenName)
+        {
+            //Only allowed for system tokens
+            var tokenInfo = SystemTokens.GetAll().FirstOrDefault(x => x.Name.Equals(tokenName, StringComparison.InvariantCultureIgnoreCase) || x.Ticker.Equals(tokenName, StringComparison.InvariantCultureIgnoreCase));
+            if (tokenInfo != null)
+                return tokenInfo;
+
+            return null;
+        }
+
+
         public async Task<TokenData?> GetTokenInfo(string tokenId)
         {
+            // Check by name
+            var tokenInfo = await GetTokenInfoByName(tokenId);
+            if (tokenInfo != null)
+                return tokenInfo;
+
+
             // Check system tokens first
-            var tokenInfo = SystemTokens.GetAll().FirstOrDefault(x => x.TokenId.Equals(tokenId));
+            tokenInfo = SystemTokens.GetAll().FirstOrDefault(x => x.TokenId.Equals(tokenId));
             if (tokenInfo != null)
                 return tokenInfo;
 
